@@ -254,8 +254,8 @@ SDK esp_iot_sdk_v0.9.4_14_12_19 or higher
 
 **Authors:**
 [Tuan PM](https://twitter.com/TuanPMT)
-[qinfei china] 感谢tuan PM的贡献
 
+[qinfei] 基于tuan PM  非常感谢
 
 **LICENSE - "MIT License"**
 
