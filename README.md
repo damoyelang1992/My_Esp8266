@@ -5,11 +5,13 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
 
 
 **Features:**
-
  * Support subscribing, publishing, authentication, will messages, keep alive pings and all 3 QoS levels (it should be a fully functional client).
  * Support multiple connection (to multiple hosts).
  * Support SSL connection (max 1024 bit key size)
  * Easy to setup and use
+ * 以下是我修改的部分：
+ * 支持SmartConfig
+ * 使用环境：windows+eclipse
 
 **Compile:**
 
@@ -252,11 +254,7 @@ SDK esp_iot_sdk_v0.9.4_14_12_19 or higher
 
 **Authors:**
 [Tuan PM](https://twitter.com/TuanPMT)
-
-**Donations**
-
-Invite me to a coffee
-[![Donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JR9RVLFC4GE6J)
+[qinfei china] 感谢tuan PM的贡献
 
 
 **LICENSE - "MIT License"**
