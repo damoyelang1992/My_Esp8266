@@ -38,6 +38,7 @@
 #include "user_interface.h"
 #include "mem.h"
 #include "smart.h"
+
 MQTT_Client mqttClient;
 
 void CheckWifi(void)
@@ -47,11 +48,6 @@ void CheckWifi(void)
 	uint8 a = wifi_station_get_auto_connect();
 	if(a) wifi_station_set_auto_connect(0);
 	int i = wifi_station_get_ap_info(config);
-//	int j=0;
-//	for(;j<5;j++)
-//	{
-//		os_printf("SSID:%s\n",config[j].ssid);
-//	}
 	uint8_t *ssid = config[0].ssid;
 	uint8_t *pass = config[0].password;
 	if(config[0].ssid)
@@ -74,10 +70,23 @@ void user_rf_pre_init(void)
 {
 }
 
+void sysInfoInit()
+{
+	sysCfg.cfg_holder = CFG_HOLDER;
+	os_sprintf(sysCfg.device_id, MQTT_CLIENT_ID, system_get_chip_id());
+	os_sprintf(sysCfg.mqtt_host, "%s", MQTT_HOST);
+	sysCfg.mqtt_port = MQTT_PORT;
+	os_sprintf(sysCfg.mqtt_user, "%s", MQTT_USER);
+	os_sprintf(sysCfg.mqtt_pass, "%s", MQTT_PASS);
+	sysCfg.security = DEFAULT_SECURITY;	/* default non ssl */
+	sysCfg.mqtt_keepalive = MQTT_KEEPALIVE;
+}
+
 void user_init(void)
 {
 	uart_init(BIT_RATE_9600, BIT_RATE_9600);
-	CFG_Load();
+//	CFG_Load();
+	sysInfoInit();
 	MQTT_InitConnection(&mqttClient, sysCfg.mqtt_host, sysCfg.mqtt_port, sysCfg.security);
 	MQTT_InitClient(&mqttClient, sysCfg.device_id, sysCfg.mqtt_user, sysCfg.mqtt_pass, sysCfg.mqtt_keepalive, 1);
 	MQTT_InitLWT(&mqttClient, "/lwt", "offline", 0, 0);

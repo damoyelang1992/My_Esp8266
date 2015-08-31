@@ -86,10 +86,6 @@ CFG_Load()
 
 		sysCfg.cfg_holder = CFG_HOLDER;
 
-		os_sprintf(sysCfg.sta_ssid, "%s", STA_SSID);
-		os_sprintf(sysCfg.sta_pwd, "%s", STA_PASS);
-		sysCfg.sta_type = STA_TYPE;
-
 		os_sprintf(sysCfg.device_id, MQTT_CLIENT_ID, system_get_chip_id());
 		os_sprintf(sysCfg.mqtt_host, "%s", MQTT_HOST);
 		sysCfg.mqtt_port = MQTT_PORT;

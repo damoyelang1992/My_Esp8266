@@ -7,18 +7,14 @@
 
 /*DEFAULT CONFIGURATIONS*/
 
-#define MQTT_HOST			"mqtt.yourdomain.com" //or "mqtt.yourdomain.com"
+#define MQTT_HOST			"120.26.214.65" //or "mqtt.yourdomain.com"
 #define MQTT_PORT			1883
 #define MQTT_BUF_SIZE		1024
 #define MQTT_KEEPALIVE		60	 /*second*/
 
 #define MQTT_CLIENT_ID		"DVES_%08X"
 #define MQTT_USER			"yourusername"
-#define MQTT_PASS			"yourpassword"
-
-#define STA_SSID "Lexin_Smart"
-#define STA_PASS "lexin123"
-#define STA_TYPE AUTH_WPA2_PSK
+#define MQTT_PASS			"password"
 
 #define MQTT_RECONNECT_TIMEOUT 	5	/*second*/
 

@@ -39,13 +39,14 @@
 #include "user_config.h"
 #include "mqtt.h"
 #include "queue.h"
+#include "config.h"
 
 #define MQTT_TASK_PRIO        		0
 #define MQTT_TASK_QUEUE_SIZE    	1
 #define MQTT_SEND_TIMOUT			5
 
 #ifndef QUEUE_BUFFER_SIZE
-#define QUEUE_BUFFER_SIZE		 	2048
+#define QUEUE_BUFFER_SIZE		 	512  /****±¾À´ÊÇ2048****/
 #endif
 
 unsigned char *default_certificate;
@@ -656,14 +657,8 @@ void mqttConnectedCb(uint32_t *args)
 {
 	MQTT_Client* client = (MQTT_Client*)args;
 	INFO("MQTT: Connected\r\n");
-	MQTT_Subscribe(client, "qinfei", 0);
-//	MQTT_Subscribe(client, "/mqtt/topic/1", 1);
-//	MQTT_Subscribe(client, "/mqtt/topic/2", 2);
-
-	MQTT_Publish(client, "qinfei", "hello0", 6, 0, 0);
-//	MQTT_Publish(client, "/mqtt/topic/1", "hello1", 6, 1, 0);
-//	MQTT_Publish(client, "/mqtt/topic/2", "hello2", 6, 2, 0);
-
+	MQTT_Subscribe(client,sysCfg.device_id, 0);
+	MQTT_Publish(client,sysCfg.device_id, "Hello,I'm online",16, 0, 0);
 }
 
 void mqttDisconnectedCb(uint32_t *args)
