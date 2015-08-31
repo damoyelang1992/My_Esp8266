@@ -177,59 +177,6 @@ flash: firmware/0x00000.bin firmware/0x40000.bin
 ```
 The BLANKER is the blank.bin file you find in your SDKs bin folder.
 
-**Create SSL Self sign**
-
-```
-openssl req -x509 -newkey rsa:1024 -keyout key.pem -out cert.pem -days XXX
-```
-
-**SSL Mqtt broker for test**
-
-```javascript
-var mosca = require('mosca')
-var SECURE_KEY = __dirname + '/key.pem';
-var SECURE_CERT = __dirname + '/cert.pem';
-var ascoltatore = {
-  //using ascoltatore
-  type: 'mongo',
-  url: 'mongodb://localhost:27017/mqtt',
-  pubsubCollection: 'ascoltatori',
-  mongo: {}
-};
-
-var moscaSettings = {
-  port: 1880,
-  stats: false,
-  backend: ascoltatore,
-  persistence: {
-    factory: mosca.persistence.Mongo,
-    url: 'mongodb://localhost:27017/mqtt'
-  },
-  secure : {
-    keyPath: SECURE_KEY,
-    certPath: SECURE_CERT,
-    port: 1883
-  }
-};
-
-var server = new mosca.Server(moscaSettings);
-server.on('ready', setup);
-
-server.on('clientConnected', function(client) {
-    console.log('client connected', client.id);
-});
-
-// fired when a message is received
-server.on('published', function(packet, client) {
-  console.log('Published', packet.payload);
-});
-
-// fired when the mqtt server is ready
-function setup() {
-  console.log('Mosca server is up and running')
-}
-```
-
 **Example projects using esp_mqtt:**<br/>
 - [https://github.com/eadf/esp_mqtt_lcd](https://github.com/eadf/esp_mqtt_lcd)
 
@@ -253,13 +200,9 @@ function setup() {
 SDK esp_iot_sdk_v0.9.4_14_12_19 or higher
 
 **Authors:**
-[Tuan PM](https://twitter.com/TuanPMT)
-
-[qinfei] 基于tuan PM  非常感谢
+[qinfei] 基于tuan PM 和 CHERTS的windows软件包以及例程 非常感谢
 
 **LICENSE - "MIT License"**
-
-Copyright (c) 2014-2015 Tuan PM, https://twitter.com/TuanPMT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
