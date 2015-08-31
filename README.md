@@ -204,6 +204,7 @@ SDK esp_iot_sdk_v0.9.4_14_12_19 or higher
 
 **Authors:**
 秦飞 南通 基于tuan PM 和 CHERTS的windows软件包以及例程 非常感谢
+
 E-mail：iqinfei@163.com
 
 **LICENSE - "MIT License"**
