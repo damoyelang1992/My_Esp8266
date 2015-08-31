@@ -14,24 +14,16 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  * 使用环境：windows+eclipse
 
 **编译环境搭建:**
-Instructions for installing and configuring the Unofficial Development Kit for Espressif ESP8266:
 
- *1. To download the Windows (98Mb) and install my Unofficial Development Kit for Espressif ESP8266.
- 
- *2. Download and install the Java Runtime x86 (jre-7u72-windows-i586.exe)
- 
+Instructions for installing and configuring the Unofficial Development Kit for Espressif ESP8266:
+ *To download the Windows (98Mb) and install my Unofficial Development Kit for Espressif ESP8266.
+ *Download and install the Java Runtime x86 (jre-7u72-windows-i586.exe)
  *3. Download and install Eclipse Luna x86 to develop in C ++ (eclipse-cpp-luna-SR1-win32.zip). Unpack the archive to the root of drive C.
- 
  *4. Download and install MinGW. Run mingw-get-setup.exe, the installation process to select without GUI, ie uncheck "... also install support for the graphical user interface".
- 
  *5. Download the (84Mb) my scripts to automate the installation of additional modules for MinGW.
- 
  *6. Run from my file install-mingw-package.bat. He will establish the basic modules for MinGW, installation should proceed without error.
- 
  *7. Start the Eclipse Luna from the directory c:\eclipse\eclipse.exe
- 
  *8. In Eclipse, select File -> Import -> General -> Existing Project into Workspace, in the line Select root directory, select the directory C:\Espressif\examples and import work projects.
- 
  *Further, the right to select the Make Target project, such as hello-world and run the target All the assembly, while in the console window should display the progress of the build. To select the target firmware flash.
  
 
