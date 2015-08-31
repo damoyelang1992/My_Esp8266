@@ -20,20 +20,24 @@ Make sure to add PYTHON PATH and compile PATH to Eclipse environment variable if
 for Windows:
 
 ```bash
-git clone https://github.com/tuanpmt/esp_mqtt
-cd esp_mqtt
-#clean
-mingw32-make clean
-#make
-mingw32-make SDK_BASE="c:/Espressif/ESP8266_SDK" FLAVOR="release" all
-#flash
-mingw32-make ESPPORT="COM1" flash
+git clone https://github.com/damoyelang1992/My_Esp8266
+BUILD_BASE	= build
+FW_BASE		= firmware
+
+XTENSA_TOOLS_ROOT ?= c:/Espressif/xtensa-lx106-elf/bin
+
+SDK_BASE	?= c:\Espressif\ESP8266_SDK
+
+SDK_TOOLS	?= c:/Espressif/utils
+ESPTOOL		?= $(SDK_TOOLS)/esptool.exe
+ESPPORT		?= COM4
+ESPBAUD		?= 115200
 ```
 
 for Mac or Linux:
 
 ```bash
-git clone https://github.com/tuanpmt/esp_mqtt
+git clone https://github.com/damoyelang1992/My_Esp8266
 cd esp_mqtt
 #clean
 make clean
@@ -55,86 +59,67 @@ make ESPPORT="/dev/ttyUSB0" flash
 #include "gpio.h"
 #include "user_interface.h"
 #include "mem.h"
+#include "smart.h"
 
 MQTT_Client mqttClient;
 
-void wifiConnectCb(uint8_t status)
+void CheckWifi(void)
 {
-	if(status == STATION_GOT_IP){
-		MQTT_Connect(&mqttClient);
-	} else {
-		MQTT_Disconnect(&mqttClient);
+	uint8 ModeFlag,ssidFlag;
+	struct station_config config[5];
+	uint8 a = wifi_station_get_auto_connect();
+	if(a) wifi_station_set_auto_connect(0);
+	int i = wifi_station_get_ap_info(config);
+	uint8_t *ssid = config[0].ssid;
+	uint8_t *pass = config[0].password;
+	if(config[0].ssid)
+	{
+		WIFI_Connect(ssid,pass,wifiConnectCb);
+		wifi_station_set_auto_connect(1);
+	}else{
+		os_printf("LIG:20;");
+		os_delay_us(500000);
+		os_printf("LIG:0;");
+		os_delay_us(500000);
+		os_printf("LIG:20;");
+		os_delay_us(500000);
+		os_printf("LIG:0;");
+		smartconfig_start(smartconfig_done);
 	}
 }
-void mqttConnectedCb(uint32_t *args)
+
+void user_rf_pre_init(void)
 {
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Connected\r\n");
-	MQTT_Subscribe(client, "/mqtt/topic/0", 0);
-	MQTT_Subscribe(client, "/mqtt/topic/1", 1);
-	MQTT_Subscribe(client, "/mqtt/topic/2", 2);
-
-	MQTT_Publish(client, "/mqtt/topic/0", "hello0", 6, 0, 0);
-	MQTT_Publish(client, "/mqtt/topic/1", "hello1", 6, 1, 0);
-	MQTT_Publish(client, "/mqtt/topic/2", "hello2", 6, 2, 0);
-
 }
 
-void mqttDisconnectedCb(uint32_t *args)
+void sysInfoInit()
 {
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Disconnected\r\n");
+	sysCfg.cfg_holder = CFG_HOLDER;
+	os_sprintf(sysCfg.device_id, MQTT_CLIENT_ID, system_get_chip_id());
+	os_sprintf(sysCfg.mqtt_host, "%s", MQTT_HOST);
+	sysCfg.mqtt_port = MQTT_PORT;
+	os_sprintf(sysCfg.mqtt_user, "%s", MQTT_USER);
+	os_sprintf(sysCfg.mqtt_pass, "%s", MQTT_PASS);
+	sysCfg.security = DEFAULT_SECURITY;	/* default non ssl */
+	sysCfg.mqtt_keepalive = MQTT_KEEPALIVE;
+//	os_printf(sysCfg.device_id);
 }
-
-void mqttPublishedCb(uint32_t *args)
-{
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Published\r\n");
-}
-
-void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, const char *data, uint32_t data_len)
-{
-	char *topicBuf = (char*)os_zalloc(topic_len+1),
-			*dataBuf = (char*)os_zalloc(data_len+1);
-
-	MQTT_Client* client = (MQTT_Client*)args;
-
-	os_memcpy(topicBuf, topic, topic_len);
-	topicBuf[topic_len] = 0;
-
-	os_memcpy(dataBuf, data, data_len);
-	dataBuf[data_len] = 0;
-
-	INFO("Receive topic: %s, data: %s \r\n", topicBuf, dataBuf);
-	os_free(topicBuf);
-	os_free(dataBuf);
-}
-
 
 void user_init(void)
 {
-	uart_init(BIT_RATE_115200, BIT_RATE_115200);
-	os_delay_us(1000000);
-
-	CFG_Load();
-
+	uart_init(BIT_RATE_9600, BIT_RATE_9600);
+//	CFG_Load();
+	sysInfoInit();
 	MQTT_InitConnection(&mqttClient, sysCfg.mqtt_host, sysCfg.mqtt_port, sysCfg.security);
-	//MQTT_InitConnection(&mqttClient, "192.168.11.122", 1880, 0);
-
 	MQTT_InitClient(&mqttClient, sysCfg.device_id, sysCfg.mqtt_user, sysCfg.mqtt_pass, sysCfg.mqtt_keepalive, 1);
-	//MQTT_InitClient(&mqttClient, "client_id", "user", "pass", 120, 1);
-
 	MQTT_InitLWT(&mqttClient, "/lwt", "offline", 0, 0);
 	MQTT_OnConnected(&mqttClient, mqttConnectedCb);
 	MQTT_OnDisconnected(&mqttClient, mqttDisconnectedCb);
 	MQTT_OnPublished(&mqttClient, mqttPublishedCb);
 	MQTT_OnData(&mqttClient, mqttDataCb);
-
-	WIFI_Connect(sysCfg.sta_ssid, sysCfg.sta_pwd, wifiConnectCb);
-
+	CheckWifi();
 	INFO("\r\nSystem started ...\r\n");
 }
-
 ```
 
 **Publish message and Subscribe**
@@ -173,7 +158,8 @@ In the Makefile, it will erase section hold the user configuration at 0x3C000
 
 ```bash
 flash: firmware/0x00000.bin firmware/0x40000.bin
-	$(PYTHON) $(ESPTOOL) -p $(ESPPORT) write_flash 0x00000 firmware/0x00000.bin 0x3C000 $(BLANKER) 0x40000 firmware/0x40000.bin 
+		$(vecho) "eagle.flash.bin-------->0x00000"
+		$(vecho) "eagle.irom0text.bin---->0x40000"
 ```
 The BLANKER is the blank.bin file you find in your SDKs bin folder.
 
