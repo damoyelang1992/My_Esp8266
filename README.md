@@ -10,7 +10,10 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  * Support SSL connection (max 1024 bit key size)
  * Easy to setup and use
  * 以下是我修改的部分：
- * 支持SmartConfig
+ * wifi自动连接
+ * mqtt自动连接
+ * 支持SmartConfig，第一次使用会向串口发送两次“LIG:20”/"LIG:0",然后开始SmartConfig配置
+ * wifi断开之后每10秒重试连接一次，连接十次之后开启SmartConfig，等待手机连接
  * 使用环境：windows+eclipse
 
 **编译环境搭建:**
