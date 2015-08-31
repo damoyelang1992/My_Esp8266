@@ -177,6 +177,7 @@ The BLANKER is the blank.bin file you find in your SDKs bin folder.
 
 [MQTT Client for test](https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en)
 
+[For more infomation](http://www.esp8266.com/viewtopic.php?f=9&t=820)
 **Contributing:**
 
 ***Feel free to contribute to the project in any way you like!***
