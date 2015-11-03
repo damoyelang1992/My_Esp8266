@@ -16,7 +16,7 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  * wifi断开之后每10秒重试连接一次，连接十次之后开启SmartConfig，等待手机连接
  * 使用环境：windows+eclipse
  * 硬件与服务器之间采用SSL连接，用户名密码更安全
- * 硬件序列号采用MD5加密，防止被穷举
+ * 硬件序列号采用32位MD5加密，防止被穷举
  
 
 **现有错误:**
@@ -249,7 +249,8 @@ The BLANKER is the blank.bin file you find in your SDKs bin folder.
 - [https://github.com/eadf/esp_mqtt_lcd](https://github.com/eadf/esp_mqtt_lcd)
 
 **Limited:**<br/>
-- Not fully supported retransmit for QoS1 and QoS2
+~~ - Not fully supported retransmit for QoS1 and QoS2 ~~
+supported retransmit for QoS1 and QoS2 as my test
 
 **Status:** *Pre release.*
 
