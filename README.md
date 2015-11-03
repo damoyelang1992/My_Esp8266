@@ -17,7 +17,12 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  * 使用环境：windows+eclipse
  * 硬件与服务器之间采用SSL连接，用户名密码更安全
  * 硬件序列号采用MD5加密，防止被穷举
+ 
 
+**现有错误:**
+ *MQTT的SSL连接buffer好像太小，不过我调整为3096也是不行一直报告ERROR: Message too long，不影响使用
+ 
+ 
 **编译环境搭建:**
 
 Instructions for installing and configuring the Unofficial Development Kit for Espressif ESP8266:
