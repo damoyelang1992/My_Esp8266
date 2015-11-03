@@ -249,7 +249,7 @@ The BLANKER is the blank.bin file you find in your SDKs bin folder.
 - [https://github.com/eadf/esp_mqtt_lcd](https://github.com/eadf/esp_mqtt_lcd)
 
 **Limited:**<br/>
-~~ - Not fully supported retransmit for QoS1 and QoS2 ~~
+~~- Not fully supported retransmit for QoS1 and QoS2 ~~
 supported retransmit for QoS1 and QoS2 as my test
 
 **Status:** *Pre release.*
