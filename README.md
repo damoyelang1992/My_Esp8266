@@ -12,7 +12,7 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  * 以下是我修改的部分：
  * wifi自动连接
  * mqtt自动连接
- * 支持SmartConfig，第一次使用会向串口发送两次“LIG:20”/"LIG:0",然后开始SmartConfig配置
+ * 支持SmartConfig，~~第一次使用会向串口发送两次“LIG:20”/"LIG:0",然后开始SmartConfig配置~~ 不再闪灯，提高用户体验，现在开闭更改为“LIG:ON;”和“LIG:OFF;”
  * wifi断开之后每10秒重试连接一次，连接十次之后开启SmartConfig，等待手机连接
  * 使用环境：windows+eclipse
  * 硬件与服务器之间采用SSL连接，用户名密码更安全
