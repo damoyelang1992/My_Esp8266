@@ -7,19 +7,19 @@
 
 /*DEFAULT CONFIGURATIONS*/
 
-#define MQTT_HOST			"iot.open-smart.cn" //or "mqtt.yourdomain.com"
-#define MQTT_PORT			8883
+#define MQTT_HOST			"写入你自己的服务器地址" //or "mqtt.yourdomain.com"
+#define MQTT_PORT			服务器端口，默认SSL打开，请修改DEFAULT_SECURITY为0关闭SSL
 #define MQTT_BUF_SIZE		1024
 #define MQTT_KEEPALIVE		60	 /*second*/
 
-#define MQTT_CLIENT_ID		"DVES%08X"
-#define MQTT_USER			"LexinSmart"
-#define MQTT_PASS			"doASwe12"
+#define MQTT_CLIENT_ID		"DVES%08X"//根据芯片ID号进行自动生成
+#define MQTT_USER			"MQTT用户名，自行填写"
+#define MQTT_PASS			"MQTT密码"
 
 #define MQTT_RECONNECT_TIMEOUT 	5	   /*second*/
 
 #define DEFAULT_SECURITY	            1
-#define QUEUE_BUFFER_SIZE		 		2048 /*������ 2048*/
+#define QUEUE_BUFFER_SIZE		 		2048 /*±¾À´ÊÇ 2048*/
 
 #define PROTOCOL_NAMEv311			/*MQTT version 3.11 compatible with https://eclipse.org/paho/clients/testing/*/
 #endif
