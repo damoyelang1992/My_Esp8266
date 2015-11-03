@@ -44,13 +44,13 @@ static void ICACHE_FLASH_ATTR wifi_check_ip(void *arg)
 				wifi_station_connect();
 			}else{
 				/************这里即将填充SmartConfig功能*************/
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
-				os_delay_us(500000);
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
+//				os_delay_us(500000);
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
 				INFO("SmartConfigStart。。。\r\n");
 				ConNum=0;
 //				os_timer_disarm(&WiFiLinker);
@@ -67,13 +67,13 @@ static void ICACHE_FLASH_ATTR wifi_check_ip(void *arg)
 				wifi_station_connect();
 			}else{
 				/************这里即将填充SmartConfig功能*************/
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
-				os_delay_us(500000);
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
+//				os_delay_us(500000);
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
 				INFO("SmartConfigStart。。。\r\n");
 				ConNum=0;
 //				os_timer_disarm(&WiFiLinker);
@@ -92,13 +92,13 @@ static void ICACHE_FLASH_ATTR wifi_check_ip(void *arg)
 				wifi_station_connect();
 			}else{
 				/************这里即将填充SmartConfig功能*************/
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
-				os_delay_us(500000);
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
+//				os_delay_us(500000);
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
 				INFO("SmartConfigStart。。。\r\n");
 				ConNum=0;
 //				os_timer_disarm(&WiFiLinker);
@@ -114,13 +114,13 @@ static void ICACHE_FLASH_ATTR wifi_check_ip(void *arg)
 				INFO("STATION_IDLE\r\n");
 			}else{
 				/************这里即将填充SmartConfig功能*************/
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
-				os_delay_us(500000);
-				os_printf("on");
-				os_delay_us(500000);
-				os_printf("off");
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
+//				os_delay_us(500000);
+//				os_printf("LIG:20;");
+//				os_delay_us(500000);
+//				os_printf("LIG:0;");
 				INFO("SmartConfigStart。。。\r\n");
 				ConNum=0;
 //				os_timer_disarm(&WiFiLinker);

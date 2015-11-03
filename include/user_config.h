@@ -7,20 +7,20 @@
 
 /*DEFAULT CONFIGURATIONS*/
 
-#define MQTT_HOST			"120.26.214.65" //or "mqtt.yourdomain.com"
-#define MQTT_PORT			1883
+#define MQTT_HOST			"iot.open-smart.cn" //or "mqtt.yourdomain.com"
+#define MQTT_PORT			8883
 #define MQTT_BUF_SIZE		1024
 #define MQTT_KEEPALIVE		60	 /*second*/
 
-#define MQTT_CLIENT_ID		"DVES_%08X"
-#define MQTT_USER			"yourusername"
-#define MQTT_PASS			"password"
+#define MQTT_CLIENT_ID		"DVES%08X"
+#define MQTT_USER			"LexinSmart"
+#define MQTT_PASS			"doASwe12"
 
-#define MQTT_RECONNECT_TIMEOUT 	5	/*second*/
+#define MQTT_RECONNECT_TIMEOUT 	5	   /*second*/
 
-#define DEFAULT_SECURITY	            0
-#define QUEUE_BUFFER_SIZE		 		512 /*本来是 2048*/
+#define DEFAULT_SECURITY	            1
+#define QUEUE_BUFFER_SIZE		 		2048 /*本来是 2048*/
 
-#define PROTOCOL_NAMEv31	/*MQTT version 3.1 compatible with Mosquitto v0.15*/
-//PROTOCOL_NAMEv311			/*MQTT version 3.11 compatible with https://eclipse.org/paho/clients/testing/*/
+#define PROTOCOL_NAMEv311			/*MQTT version 3.11 compatible with https://eclipse.org/paho/clients/testing/*/
 #endif
+//PROTOCOL_NAMEv31	/*MQTT version 3.1 compatible with Mosquitto v0.15*/

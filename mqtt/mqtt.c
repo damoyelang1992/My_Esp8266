@@ -46,7 +46,7 @@
 #define MQTT_SEND_TIMOUT			5
 
 #ifndef QUEUE_BUFFER_SIZE
-#define QUEUE_BUFFER_SIZE		 	512  /****本来是2048****/
+#define QUEUE_BUFFER_SIZE		 	2048  /****本来是2048****/
 #endif
 
 unsigned char *default_certificate;
@@ -87,7 +87,7 @@ mqtt_dns_found(const char *name, ip_addr_t *ipaddr, void *arg)
 		}
 
 		client->connState = TCP_CONNECTING;
-		INFO("TCP: connecting...\r\n");
+//		INFO("TCP: connecting...\r\n");
 	}
 
 	system_os_post(MQTT_TASK_PRIO, 0, (os_param_t)client);
@@ -127,9 +127,8 @@ mqtt_tcpclient_recv(void *arg, char *pdata, unsigned short len)
 
 	struct espconn *pCon = (struct espconn*)arg;
 	MQTT_Client *client = (MQTT_Client *)pCon->reverse;
-
 READPACKET:
-	INFO("TCP: data received %d bytes\r\n", len);
+//	INFO("TCP: data received %d bytes\r\n", len);
 	if(len < MQTT_BUF_SIZE && len > 0){
 		os_memcpy(client->mqtt_state.in_buffer, pdata, len);
 
@@ -256,7 +255,7 @@ mqtt_tcpclient_sent_cb(void *arg)
 {
 	struct espconn *pCon = (struct espconn *)arg;
 	MQTT_Client* client = (MQTT_Client *)pCon->reverse;
-	INFO("TCP: Sent\r\n");
+//	INFO("TCP: Sent\r\n");
 	client->sendTimeout = 0;
 	if(client->connState == MQTT_DATA && client->mqtt_state.pending_msg_type == MQTT_MSG_TYPE_PUBLISH){
 		if(client->publishedCb)
@@ -313,7 +312,7 @@ mqtt_tcpclient_discon_cb(void *arg)
 
 	struct espconn *pespconn = (struct espconn *)arg;
 	MQTT_Client* client = (MQTT_Client *)pespconn->reverse;
-	INFO("TCP: Disconnected callback\r\n");
+//	INFO("TCP: Disconnected callback\r\n");
 	client->connState = TCP_RECONNECT_REQ;
 	if(client->disconnectedCb)
 		client->disconnectedCb((uint32_t*)client);
@@ -370,7 +369,7 @@ mqtt_tcpclient_recon_cb(void *arg, sint8 errType)
 	struct espconn *pCon = (struct espconn *)arg;
 	MQTT_Client* client = (MQTT_Client *)pCon->reverse;
 
-	INFO("TCP: Reconnect to %s:%d\r\n", client->host, client->port);
+//	INFO("TCP: Reconnect to %s:%d\r\n", client->host, client->port);
 
 	client->connState = TCP_RECONNECT_REQ;
 
@@ -455,7 +454,7 @@ MQTT_Task(os_event_t *e)
 		break;
 	case TCP_RECONNECT:
 		MQTT_Connect(client);
-		INFO("TCP: Reconnect to: %s:%d\r\n", client->host, client->port);
+//		INFO("TCP: Reconnect to: %s:%d\r\n", client->host, client->port);
 		client->connState = TCP_CONNECTING;
 		break;
 	case MQTT_DATA:
@@ -601,7 +600,7 @@ MQTT_Connect(MQTT_Client *mqttClient)
 	os_timer_arm(&mqttClient->mqttTimer, 1000, 1);
 
 	if(UTILS_StrToIP(mqttClient->host, &mqttClient->pCon->proto.tcp->remote_ip)) {
-		INFO("TCP: Connect to ip  %s:%d\r\n", mqttClient->host, mqttClient->port);
+//		INFO("TCP: Connect to ip  %s:%d\r\n", mqttClient->host, mqttClient->port);
 		if(mqttClient->security){
 			espconn_secure_connect(mqttClient->pCon);
 		}
@@ -610,7 +609,7 @@ MQTT_Connect(MQTT_Client *mqttClient)
 		}
 	}
 	else {
-		INFO("TCP: Connect to domain %s:%d\r\n", mqttClient->host, mqttClient->port);
+//		INFO("TCP: Connect to domain %s:%d\r\n", mqttClient->host, mqttClient->port);
 		espconn_gethostbyname(mqttClient->pCon, mqttClient->host, &mqttClient->ip, mqtt_dns_found);
 	}
 	mqttClient->connState = TCP_CONNECTING;
