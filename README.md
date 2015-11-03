@@ -219,7 +219,7 @@ BOOL MQTT_Publish(MQTT_Client *client, const char* topic, const char* data, int 
 ```c
 
 /* Broker will publish a message with qos = 0, retain = 0, data = "offline" to topic "/lwt" if client don't send keepalive packet */
-MQTT_InitLWT(&mqttClient, "/lwt", "offline", 0, 0);
+MQTT_InitLWT(&mqttClient, sysCfg.device_id, "Oh~~ I am offline", 0, 0);
 
 ```
 
