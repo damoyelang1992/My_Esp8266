@@ -20,6 +20,7 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
  
 
 **现有错误:**
+
  *MQTT的SSL连接buffer好像太小，不过我调整为3096也是不行一直报告ERROR: Message too long，不影响使用
  
  
