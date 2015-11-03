@@ -5,11 +5,31 @@ This is MQTT client library for ESP8266, port from: [MQTT client library for Con
 
 
 **Features:**
-
  * Support subscribing, publishing, authentication, will messages, keep alive pings and all 3 QoS levels (it should be a fully functional client).
  * Support multiple connection (to multiple hosts).
  * Support SSL connection (max 1024 bit key size)
  * Easy to setup and use
+ * 以下是我修改的部分：
+ * wifi自动连接
+ * mqtt自动连接
+ * 支持SmartConfig，第一次使用会向串口发送两次“LIG:20”/"LIG:0",然后开始SmartConfig配置
+ * wifi断开之后每10秒重试连接一次，连接十次之后开启SmartConfig，等待手机连接
+ * 使用环境：windows+eclipse
+
+**编译环境搭建:**
+
+Instructions for installing and configuring the Unofficial Development Kit for Espressif ESP8266:
+
+ 1. To [download the Windows](http://programs74.ru/get.php?file=EspressifESP8266DevKit) (98Mb) and install my Unofficial Development Kit for Espressif ESP8266.
+ 2. [Download](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and install the Java Runtime x86 (jre-7u72-windows-i586.exe)
+ 3. [Download](http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR1/eclipse-cpp-luna-SR1-win32.zip) and install Eclipse Luna x86 to develop in C ++ (eclipse-cpp-luna-SR1-win32.zip). Unpack the archive to the root of drive C.
+ 4. [Download](http://sourceforge.net/projects/mingw/files/Installer/) and install MinGW. Run mingw-get-setup.exe, the installation process to select without GUI, ie uncheck "... also install support for the graphical user interface".
+ 5. [Download](http://programs74.ru/get.php?file=EspressifESP8266DevKitAddon) the (84Mb) my scripts to automate the installation of additional modules for MinGW.
+ 6. Run from my file install-mingw-package.bat. He will establish the basic modules for MinGW, installation should proceed without error.
+ 7. Start the Eclipse Luna from the directory c:\eclipse\eclipse.exe
+ 8. In Eclipse, select File -> Import -> General -> Existing Project into Workspace, in the line Select root directory, select the directory C:\Espressif\examples and import work projects.
+ 9. Further, the right to select the Make Target project, such as hello-world and run the target All the assembly, while in the console window should display the progress of the build. To select the target firmware flash.
+ 
 
 **Compile:**
 
@@ -18,20 +38,24 @@ Make sure to add PYTHON PATH and compile PATH to Eclipse environment variable if
 for Windows:
 
 ```bash
-git clone https://github.com/tuanpmt/esp_mqtt
-cd esp_mqtt
-#clean
-mingw32-make clean
-#make
-mingw32-make SDK_BASE="c:/Espressif/ESP8266_SDK" FLAVOR="release" all
-#flash
-mingw32-make ESPPORT="COM1" flash
+git clone https://github.com/damoyelang1992/My_Esp8266
+BUILD_BASE	= build
+FW_BASE		= firmware
+
+XTENSA_TOOLS_ROOT ?= c:/Espressif/xtensa-lx106-elf/bin
+
+SDK_BASE	?= c:\Espressif\ESP8266_SDK
+
+SDK_TOOLS	?= c:/Espressif/utils
+ESPTOOL		?= $(SDK_TOOLS)/esptool.exe
+ESPPORT		?= COM4
+ESPBAUD		?= 115200
 ```
 
 for Mac or Linux:
 
 ```bash
-git clone https://github.com/tuanpmt/esp_mqtt
+git clone https://github.com/damoyelang1992/My_Esp8266
 cd esp_mqtt
 #clean
 make clean
@@ -53,86 +77,67 @@ make ESPPORT="/dev/ttyUSB0" flash
 #include "gpio.h"
 #include "user_interface.h"
 #include "mem.h"
+#include "smart.h"
 
 MQTT_Client mqttClient;
 
-void wifiConnectCb(uint8_t status)
+void CheckWifi(void)
 {
-	if(status == STATION_GOT_IP){
-		MQTT_Connect(&mqttClient);
-	} else {
-		MQTT_Disconnect(&mqttClient);
+	uint8 ModeFlag,ssidFlag;
+	struct station_config config[5];
+	uint8 a = wifi_station_get_auto_connect();
+	if(a) wifi_station_set_auto_connect(0);
+	int i = wifi_station_get_ap_info(config);
+	uint8_t *ssid = config[0].ssid;
+	uint8_t *pass = config[0].password;
+	if(config[0].ssid)
+	{
+		WIFI_Connect(ssid,pass,wifiConnectCb);
+		wifi_station_set_auto_connect(1);
+	}else{
+		os_printf("LIG:20;");
+		os_delay_us(500000);
+		os_printf("LIG:0;");
+		os_delay_us(500000);
+		os_printf("LIG:20;");
+		os_delay_us(500000);
+		os_printf("LIG:0;");
+		smartconfig_start(smartconfig_done);
 	}
 }
-void mqttConnectedCb(uint32_t *args)
+
+void user_rf_pre_init(void)
 {
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Connected\r\n");
-	MQTT_Subscribe(client, "/mqtt/topic/0", 0);
-	MQTT_Subscribe(client, "/mqtt/topic/1", 1);
-	MQTT_Subscribe(client, "/mqtt/topic/2", 2);
-
-	MQTT_Publish(client, "/mqtt/topic/0", "hello0", 6, 0, 0);
-	MQTT_Publish(client, "/mqtt/topic/1", "hello1", 6, 1, 0);
-	MQTT_Publish(client, "/mqtt/topic/2", "hello2", 6, 2, 0);
-
 }
 
-void mqttDisconnectedCb(uint32_t *args)
+void sysInfoInit()
 {
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Disconnected\r\n");
+	sysCfg.cfg_holder = CFG_HOLDER;
+	os_sprintf(sysCfg.device_id, MQTT_CLIENT_ID, system_get_chip_id());
+	os_sprintf(sysCfg.mqtt_host, "%s", MQTT_HOST);
+	sysCfg.mqtt_port = MQTT_PORT;
+	os_sprintf(sysCfg.mqtt_user, "%s", MQTT_USER);
+	os_sprintf(sysCfg.mqtt_pass, "%s", MQTT_PASS);
+	sysCfg.security = DEFAULT_SECURITY;	/* default non ssl */
+	sysCfg.mqtt_keepalive = MQTT_KEEPALIVE;
+//	os_printf(sysCfg.device_id);
 }
-
-void mqttPublishedCb(uint32_t *args)
-{
-	MQTT_Client* client = (MQTT_Client*)args;
-	INFO("MQTT: Published\r\n");
-}
-
-void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, const char *data, uint32_t data_len)
-{
-	char *topicBuf = (char*)os_zalloc(topic_len+1),
-			*dataBuf = (char*)os_zalloc(data_len+1);
-
-	MQTT_Client* client = (MQTT_Client*)args;
-
-	os_memcpy(topicBuf, topic, topic_len);
-	topicBuf[topic_len] = 0;
-
-	os_memcpy(dataBuf, data, data_len);
-	dataBuf[data_len] = 0;
-
-	INFO("Receive topic: %s, data: %s \r\n", topicBuf, dataBuf);
-	os_free(topicBuf);
-	os_free(dataBuf);
-}
-
 
 void user_init(void)
 {
-	uart_init(BIT_RATE_115200, BIT_RATE_115200);
-	os_delay_us(1000000);
-
-	CFG_Load();
-
+	uart_init(BIT_RATE_9600, BIT_RATE_9600);
+//	CFG_Load();
+	sysInfoInit();
 	MQTT_InitConnection(&mqttClient, sysCfg.mqtt_host, sysCfg.mqtt_port, sysCfg.security);
-	//MQTT_InitConnection(&mqttClient, "192.168.11.122", 1880, 0);
-
 	MQTT_InitClient(&mqttClient, sysCfg.device_id, sysCfg.mqtt_user, sysCfg.mqtt_pass, sysCfg.mqtt_keepalive, 1);
-	//MQTT_InitClient(&mqttClient, "client_id", "user", "pass", 120, 1);
-
 	MQTT_InitLWT(&mqttClient, "/lwt", "offline", 0, 0);
 	MQTT_OnConnected(&mqttClient, mqttConnectedCb);
 	MQTT_OnDisconnected(&mqttClient, mqttDisconnectedCb);
 	MQTT_OnPublished(&mqttClient, mqttPublishedCb);
 	MQTT_OnData(&mqttClient, mqttDataCb);
-
-	WIFI_Connect(sysCfg.sta_ssid, sysCfg.sta_pwd, wifiConnectCb);
-
+	CheckWifi();
 	INFO("\r\nSystem started ...\r\n");
 }
-
 ```
 
 **Publish message and Subscribe**
@@ -171,62 +176,10 @@ In the Makefile, it will erase section hold the user configuration at 0x3C000
 
 ```bash
 flash: firmware/0x00000.bin firmware/0x40000.bin
-	$(PYTHON) $(ESPTOOL) -p $(ESPPORT) write_flash 0x00000 firmware/0x00000.bin 0x3C000 $(BLANKER) 0x40000 firmware/0x40000.bin 
+		$(vecho) "eagle.flash.bin-------->0x00000"
+		$(vecho) "eagle.irom0text.bin---->0x40000"
 ```
 The BLANKER is the blank.bin file you find in your SDKs bin folder.
-
-**Create SSL Self sign**
-
-```
-openssl req -x509 -newkey rsa:1024 -keyout key.pem -out cert.pem -days XXX
-```
-
-**SSL Mqtt broker for test**
-
-```javascript
-var mosca = require('mosca')
-var SECURE_KEY = __dirname + '/key.pem';
-var SECURE_CERT = __dirname + '/cert.pem';
-var ascoltatore = {
-  //using ascoltatore
-  type: 'mongo',
-  url: 'mongodb://localhost:27017/mqtt',
-  pubsubCollection: 'ascoltatori',
-  mongo: {}
-};
-
-var moscaSettings = {
-  port: 1880,
-  stats: false,
-  backend: ascoltatore,
-  persistence: {
-    factory: mosca.persistence.Mongo,
-    url: 'mongodb://localhost:27017/mqtt'
-  },
-  secure : {
-    keyPath: SECURE_KEY,
-    certPath: SECURE_CERT,
-    port: 1883
-  }
-};
-
-var server = new mosca.Server(moscaSettings);
-server.on('ready', setup);
-
-server.on('clientConnected', function(client) {
-    console.log('client connected', client.id);
-});
-
-// fired when a message is received
-server.on('published', function(packet, client) {
-  console.log('Published', packet.payload);
-});
-
-// fired when the mqtt server is ready
-function setup() {
-  console.log('Mosca server is up and running')
-}
-```
 
 **Example projects using esp_mqtt:**<br/>
 - [https://github.com/eadf/esp_mqtt_lcd](https://github.com/eadf/esp_mqtt_lcd)
@@ -242,6 +195,8 @@ function setup() {
 
 [MQTT Client for test](https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en)
 
+[For more infomation click here](http://www.esp8266.com/viewtopic.php?f=9&t=820)
+
 **Contributing:**
 
 ***Feel free to contribute to the project in any way you like!***
@@ -251,17 +206,11 @@ function setup() {
 SDK esp_iot_sdk_v0.9.4_14_12_19 or higher
 
 **Authors:**
-[Tuan PM](https://twitter.com/TuanPMT)
+秦飞 南通 基于tuan PM 和 CHERTS的windows软件包以及例程 非常感谢
 
-**Donations**
-
-Invite me to a coffee
-[![Donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JR9RVLFC4GE6J)
-
+E-mail：iqinfei@163.com
 
 **LICENSE - "MIT License"**
-
-Copyright (c) 2014-2015 Tuan PM, https://twitter.com/TuanPMT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
