@@ -2,7 +2,7 @@
 ==========
 This is MQTT client library for ESP8266, port from: [MQTT client library for Contiki](https://github.com/esar/contiki-mqtt) (thanks)
 
-本帖原作者 http://www.esp8266.com/viewtopic.php?f=9&t=820此处是我根据原贴和代码改动
+本帖原出处  http://www.esp8266.com/viewtopic.php?f=9&t=820                    此处是我根据原贴和代码改动
 
 **Features:**
  * Support subscribing, publishing, authentication, will messages, keep alive pings and all 3 QoS levels (it should be a fully functional client).
